@@ -1,8 +1,8 @@
 New game
-You play as Eagle Max Power, elite special trooper from MarzSec, a secret unit of the US Army.
-While on patrol around the Martian wasteland a portal opened in the middle of your base. Tyroids
+Hello Eagle Max Power, elite special trooper from MarzSec, a secret unit of the US Army.
+While I was on patrol around the Martian wasteland a portal opened in the middle of your base. Tyroids
 and Flynoids from the planet Schrogun 6 invaded from the portal and took over your base. King
-Ralphie has taken Commander McG hostage in the bridge and are wiping out all life on mars. Are 
+Ralphie has taken Commander McG hostage in the bridge and the enemies wiping out all life on mars. Are
 you a bad enough dude to rescue rescue McG?
 
 Level 1:The Beginning

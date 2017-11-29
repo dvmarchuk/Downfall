@@ -12,6 +12,16 @@
     overflow: hidden;
     transform-origin: 50% 100%;
     transform: perspective(500px) rotateX(25deg);
+    /*background-image: url(../images/mars.jpg);*/
+    background-color: black;
+    zoom: 150%;
+    color: rgb(160, 63, 8);
+    border-spacing: 20%;
+
+}
+
+body{
+    background-color: black;
 }
 
 #titles:after
