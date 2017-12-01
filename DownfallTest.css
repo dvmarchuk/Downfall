@@ -1,0 +1,10 @@
+@CHARSET "ISO-8859-1";
+
+#renderCanvas {
+	height: 100%;
+	width: 100%;
+}
+
+#overlayCanvas {
+	boarder: 1px dashed blue;
+}
