@@ -1,3 +1,4 @@
+<<<<<<< HEAD:css/DownfallTest.css
 @CHARSET "ISO-8859-1";
 
 #renderCanvas {
@@ -8,3 +9,11 @@
 #overlayCanvas {
 	boarder: 1px dashed blue;
 }
+=======
+@CHARSET "ISO-8859-1";
+
+#renderCanvas {
+	height: 100%;
+	width: 100%;
+}
+>>>>>>> master:DownfallTest.css
