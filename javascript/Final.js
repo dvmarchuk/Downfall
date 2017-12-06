@@ -29,7 +29,7 @@ var onSuccess = function (meshes, particlesystems, skeletons) {
 var createScene = function () {
     var scene = new B.Scene(engine);
     //skybox auto
-    var envTexture = new B.CubeTexture("textures/Mars/mars", scene);
+    var envTexture = new B.CubeTexture("../textures/skybox/basic_skybox/skybox", scene);
     scene.createDefaultSkybox(envTexture, true, 1000);
 
     //physics

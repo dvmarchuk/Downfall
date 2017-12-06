@@ -111,8 +111,22 @@ var createScene = function() {
 	button1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
 	button1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 	advancedTexture.addControl(button1); */
-	  
-	// Leave this function
+
+
+    // pickedBox = BABYLON.Mesh.CreateBox("pickedBox", 10, false, BABYLON.Mesh.DEFAULTSIDE);
+    // console.log("shot fired")
+    // //collision between sprite and mesh(bullet)
+    // if (boss.intersectsMesh()) {
+		// console.log("shot made")
+    // }
+
+
+    var pointToIntersect = new BABYLON.Vector3(10, -5, 0);
+    if (boss.intersectsPoint(pointToIntersect)){
+		console.log("shot made 2")
+    }
+
+        // Leave this function
 	return scene;
 }; // End of createScene function
 
