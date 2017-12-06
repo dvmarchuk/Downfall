@@ -5,7 +5,19 @@ var canvas = document.getElementById("renderCanvas");
 
 var engine = new B.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
+//Sounds and Music
+var gunSound = new B.Sound("gunSound", "Alien_Machine_Gun-Matt_Cutillo-2023875589.mp3",scene 
+    function (){
+    gunSound.play();
+    }
+);
 
+var bossRoomSound =new B.Sound("bossSound", "572129_8-bit-Vengeance.mp3",{loop: true, autoplay: true });
+                           
+var mazeSound =new B.Sound("mazeSound", "611689_8-bit-Against-the-Odds-Red.mp3",{loop: true, autoplay: true });
+
+var monsterSound =new B.Sound("monsterSound", "Monster Growl-SoundBible.com-344645592.mp3",{loop: true, autoplay: true });  
+                           
 var onSuccess = function (meshes, particlesystems, skeletons) {
     console.log("Success");
     var wall = scene.getMeshByName("Cube.000");
