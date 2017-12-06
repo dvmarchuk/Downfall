@@ -1,6 +1,5 @@
 // Get the canvas element from our HTML above
 var canvas = document.getElementById("renderCanvas");
-var overlay = document.getElementById("overlayCanvas");
 
 // Load the BABYLON 3D engine
 //var engine = new BABYLON.Engine(canvas, true);
@@ -11,7 +10,9 @@ var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, ste
 var createScene = function() {
 	// Now create a basic Babylon Scene object
 	var scene = new BABYLON.Scene(engine);
-
+	var physicsPlugin = new BABYLON.CannonJSPlugin();
+	scene.actionManager = new BABYLON.ActionManager(scene);
+	
 	// Change the scene background color to green.
 	//scene.clearColor = new BABYLON.Color3(0, 1, 0);
 
@@ -65,14 +66,58 @@ var createScene = function() {
 	
 	var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
+	console.log("working");
+	console.log(window.screen.width);
+	var width = window.screen.availWidth / 1536;
 	var text1 = new BABYLON.GUI.TextBlock();
-    text1.text = "Hello world";
-    text1.color = "white";    
+    text1.text = "TIME";
+    text1.color = "red";    
     text1.height = "40px";
-    text1.fontSize = 24;
+    text1.fontSize = 40;
     text1.zIndex = 1;
     text1.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    advancedTexture.addControl(text1);    
+    text1.left = (585 * width) + "px";	// 585
+    advancedTexture.addControl(text1); 
+    
+    var text2 = new BABYLON.GUI.TextBlock();
+    text2.text = "KILLS";
+    text2.color = "red";    
+    text2.height = "40px";
+    text2.fontSize = 40;
+    text2.zIndex = 1;
+    text2.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    text2.left = (230 * width) + "px";
+    advancedTexture.addControl(text2); 
+    
+    var text3 = new BABYLON.GUI.TextBlock();
+    text3.text = "SHOTS";
+    text3.color = "red";    
+    text3.height = "40px";
+    text3.fontSize = 40;
+    text3.zIndex = 1;
+    text3.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    text3.left = (-165 * width) + "px";
+    advancedTexture.addControl(text3); 
+    
+    var text4 = new BABYLON.GUI.TextBlock();
+    text4.text = "HEALTH";
+    text4.color = "red";    
+    text4.height = "40px";
+    text4.fontSize = 40;
+    text4.zIndex = 1;
+    text4.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    text4.left = (-395 * width) + "px";
+    advancedTexture.addControl(text4); 
+    
+    var text5 = new BABYLON.GUI.TextBlock();
+    text5.text = "GRADE";
+    text5.color = "red";    
+    text5.height = "40px";
+    text5.fontSize = 40;
+    text5.zIndex = 1;
+    text5.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    text5.left = (-640 * width) + "px";
+    advancedTexture.addControl(text5);
 
     var image = new BABYLON.GUI.Image("but", "images/hud.png");
     image.width = 1;
@@ -83,34 +128,21 @@ var createScene = function() {
     image.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     advancedTexture.addControl(image);   
 	
-	/*var image = new BABYLON.GUI.Image("but", "images/hud.png");
-    image.width = 1;
-    var size = window.screen.availWidth / 624;
-    size = size * 75;
-    image.height = size + "px";
-    image.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    advancedTexture.addControl(image);  
-    
-    var timeTitle = new BABYLON.GUI.TextBlock();
-    timeTitle.text = "TIME";
-    timeTitle.color = "red";
-    timeTitle.zIndex = 1;
-    timeTitle.fontSize = 24;
-    timeTitle.horozontalAlignment = BABYLON.GUI.Control.HOROZONTAL_ALIGNMENT_RIGHT;
-    advancedTexture.addControl(timeTitle);*/ 
-	
-	/*var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "CSCI 305 - Animation and 3D Programming");
-	button1.width = "300px"
-	button1.height = "60px";
-	button1.color = "white";
-	button1.cornerRadius = 20;
-	button1.background = "green";
-	button1.onPointerUpObservable.add(function() {
-	    window.location = "http://spector5.xyz/CSCI305.html";
-	});
-	button1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-	button1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-	advancedTexture.addControl(button1); */
+    scene.enablePhysics();
+    var fired = false;
+	scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnKeyDownTrigger, parameter: "o" },
+			  function () {
+					var bullet = new BABYLON.Mesh.CreateSphere("bullet", 4, .6, scene);
+					var muzzleVelocity = 39;	// was 3
+					var gravity = 0;	// was -9.81
+					bullet.position.y = camera.position.y - .3;
+					bullet.position.x = camera.position.x;
+					bullet.position.z = camera.position.z;
+					bullet.checkCollisions = true;
+					bullet.physicsImpostor = new BABYLON.PhysicsImpostor(bullet, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 2, restitution: 0.9 }, scene);
+						
+					physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(Math.sin(camera.rotation.y) * muzzleVelocity, 0, Math.cos(camera.rotation.y) * muzzleVelocity));
+			}));
 	  
 	// Leave this function
 	return scene;
