@@ -60,11 +60,11 @@ var createScene = function() {
 
 	//Where we make a mesh to mimic the sprite - I put a cube and made it invisible.
 	//I tried using a plane but then the sprite moves and the plane stays facing one way.
-    var box = BABYLON.MeshBuilder.CreateBox("box", {}, scene);
+    box = BABYLON.MeshBuilder.CreateBox("box", {}, scene);
     box.position.y = monster.position.y;
     box.position.x = monster.position.x;
     box.position.z = -10;
-        box.visibility = true;
+    box.visibility = true;
 
 
 
@@ -154,39 +154,41 @@ var createScene = function() {
     bullet.checkCollisions = true;
     bullet.physicsImpostor = new BABYLON.PhysicsImpostor(bullet, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 2, restitution: 0.9 }, scene);
 
-    scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnEveryFrameTrigger},
+    //box.actionManager.registerAction(new BABYLON.SetValueAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: bullet }, box, "scaling", new BABYLON.Vector3(1.2, 1.2, 1.2)));
+
+    //console.log(box);
+    box.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: { box:bullet, usePreciseIntersection: true} }, box, "scaling", new BABYLON.Vector3(1.2, 1.2, 1.2),
         function () {
 
+            console.log("enemy maybe killed");
+
+
             if (bullet.intersectsMesh(box)) {
-                console.log("enemy killed");
                 //then add whatever else you need here after enemy gets hit
             }//this will only work in I am like inside the box
         }));
-    scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnKeyDownTrigger, parameter: "i" },
-        function () {
-            bullet.position.y = camera.position.y - .3;
-            bullet.position.x = camera.position.x;
-            bullet.position.z = camera.position.z;
 
-            physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(0,0,0));
 
-            // if (bullet.intersectsMesh(box)) {
-            //     console.log("enemy killed");
-            //     //then add whatever else you need here after enemy gets hit
-            // }//this will only work in I am like inside the box
-        }));
+
+
+
 	scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnKeyDownTrigger, parameter: "o" },
 			  function () {
 					var muzzleVelocity = 39;	// was 3
 					var gravity = 0;	// was -9.81
 
-					physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(Math.sin(camera.rotation.y) * muzzleVelocity, 0, Math.cos(camera.rotation.y) * muzzleVelocity));
+                  bullet.position.y = camera.position.y - .3;
+                  bullet.position.x = camera.position.x;
+                  bullet.position.z = camera.position.z;
+
+                  bullet.applyImpulse(new BABYLON.Vector3(muzzleVelocity,0,0), bullet.position);
+				  physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(Math.sin(camera.rotation.y) * muzzleVelocity, 0, Math.cos(camera.rotation.y) * muzzleVelocity));
 
 
-                  // if (bullet.intersectsMesh(box)) {
-                  //     console.log("enemy killed");
-                  //     //then add whatever else you need here after enemy gets hit
-                  // }//this will only work in I am like inside the box
+                  if (bullet.intersectsMesh(box)) {
+                      console.log("enemy killed");
+                      //then add whatever else you need here after enemy gets hit
+                  }//this will only work in I am like inside the box
 			}));
 
 
