@@ -147,24 +147,46 @@ var createScene = function() {
 	
     scene.enablePhysics();
     var fired = false;
+    var bullet = new BABYLON.Mesh.CreateSphere("bullet", 4, .6, scene);
+    bullet.position.y = -6;
+    bullet.position.x = 0;
+    bullet.position.z = 0;
+    bullet.checkCollisions = true;
+    bullet.physicsImpostor = new BABYLON.PhysicsImpostor(bullet, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 2, restitution: 0.9 }, scene);
+
+    scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnEveryFrameTrigger},
+        function () {
+
+            if (bullet.intersectsMesh(box)) {
+                console.log("enemy killed");
+                //then add whatever else you need here after enemy gets hit
+            }//this will only work in I am like inside the box
+        }));
+    scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnKeyDownTrigger, parameter: "i" },
+        function () {
+            bullet.position.y = camera.position.y - .3;
+            bullet.position.x = camera.position.x;
+            bullet.position.z = camera.position.z;
+
+            physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(0,0,0));
+
+            // if (bullet.intersectsMesh(box)) {
+            //     console.log("enemy killed");
+            //     //then add whatever else you need here after enemy gets hit
+            // }//this will only work in I am like inside the box
+        }));
 	scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnKeyDownTrigger, parameter: "o" },
 			  function () {
-					var bullet = new BABYLON.Mesh.CreateSphere("bullet", 4, .6, scene); 
 					var muzzleVelocity = 39;	// was 3
 					var gravity = 0;	// was -9.81
-					bullet.position.y = camera.position.y - .3;
-					bullet.position.x = camera.position.x;
-					bullet.position.z = camera.position.z;
-					bullet.checkCollisions = true;
-					bullet.physicsImpostor = new BABYLON.PhysicsImpostor(bullet, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 2, restitution: 0.9 }, scene);
-						
+
 					physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(Math.sin(camera.rotation.y) * muzzleVelocity, 0, Math.cos(camera.rotation.y) * muzzleVelocity));
 
 
-                  if (bullet.intersectsMesh(box)) {
-                      console.log("enemy killed");
-                      //then add whatever else you need here after enemy gets hit
-                  }//this will only work in I am like inside the box
+                  // if (bullet.intersectsMesh(box)) {
+                  //     console.log("enemy killed");
+                  //     //then add whatever else you need here after enemy gets hit
+                  // }//this will only work in I am like inside the box
 			}));
 
 
