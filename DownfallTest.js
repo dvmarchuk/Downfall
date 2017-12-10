@@ -51,11 +51,12 @@ var createScene = function() {
 	skybox.renderingGroupId = 0;
 	
 	var spriteManagerMonster = new BABYLON.SpriteManager("monsterManagr","images/monster.png", 1, 60, scene);
-	var monster = new BABYLON.Sprite("monster", spriteManagerMonster);
-	monster.position.y = 1;
-	monster.position.z = -2;
-	monster.size = 2.25;
-	monster.playAnimation(0, 2, true, 350);
+	var monsters = [];
+	monsters[0] = new BABYLON.Sprite("monster", spriteManagerMonster);
+	monsters[0].position.y = 1;
+	monsters[0].position.z = -2;
+	monsters[0].size = 2.25;
+	monsters[0].playAnimation(0, 2, true, 350);
 	
 	spriteManagerBoss = new BABYLON.SpriteManager("bossManagr","images/boss.png", 1, 148, scene);
 	boss = new BABYLON.Sprite("boss", spriteManagerBoss);
@@ -63,6 +64,11 @@ var createScene = function() {
 	boss.position.z = -5;
 	boss.size = 2.75;
 	boss.playAnimation(0, 2, true, 400);
+	
+	shots = 0;
+    kills = 0;
+    health = '100%';
+    grade = 'F';
 	
 	var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
@@ -79,6 +85,16 @@ var createScene = function() {
     text1.left = (585 * width) + "px";	// 585
     advancedTexture.addControl(text1); 
     
+    var text11 = new BABYLON.GUI.TextBlock();
+    text11.text = "0:00";
+    text11.color = "red";    
+    text11.height = "55px";
+    text11.fontSize = 55;
+    text11.zIndex = 1;
+    text11.top = 175 + "px";
+    text11.left = (585 * width) + "px";	// 585
+    advancedTexture.addControl(text11); 
+    
     var text2 = new BABYLON.GUI.TextBlock();
     text2.text = "KILLS";
     text2.color = "red";    
@@ -88,6 +104,16 @@ var createScene = function() {
     text2.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     text2.left = (230 * width) + "px";
     advancedTexture.addControl(text2); 
+    
+    var text12 = new BABYLON.GUI.TextBlock();
+    text12.text = kills.toString();
+    text12.color = "red";    
+    text12.height = "55px";
+    text12.fontSize = 55;
+    text12.zIndex = 1;
+    text12.top = 175 + "px";
+    text12.left = (230 * width) + "px";	// 585
+    advancedTexture.addControl(text12);
     
     var text3 = new BABYLON.GUI.TextBlock();
     text3.text = "SHOTS";
@@ -99,6 +125,16 @@ var createScene = function() {
     text3.left = (-165 * width) + "px";
     advancedTexture.addControl(text3); 
     
+    var text13 = new BABYLON.GUI.TextBlock();
+    text13.text = shots.toString();
+    text13.color = "red";    
+    text13.height = "55px";
+    text13.fontSize = 55;
+    text13.zIndex = 1;
+    text13.top = 175 + "px";
+    text13.left = (-165 * width) + "px";	// 585
+    advancedTexture.addControl(text13);
+    
     var text4 = new BABYLON.GUI.TextBlock();
     text4.text = "HEALTH";
     text4.color = "red";    
@@ -108,6 +144,16 @@ var createScene = function() {
     text4.verticalAlignment	= BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     text4.left = (-395 * width) + "px";
     advancedTexture.addControl(text4); 
+    
+    var text14= new BABYLON.GUI.TextBlock();
+    text14.text = health;
+    text14.color = "red";    
+    text14.height = "55px";
+    text14.fontSize = 55;
+    text14.zIndex = 1;
+    text14.top = 175 + "px";
+    text14.left = (-395 * width) + "px";	// 585
+    advancedTexture.addControl(text14);
     
     var text5 = new BABYLON.GUI.TextBlock();
     text5.text = "GRADE";
@@ -119,6 +165,16 @@ var createScene = function() {
     text5.left = (-640 * width) + "px";
     advancedTexture.addControl(text5);
 
+    var text15 = new BABYLON.GUI.TextBlock();
+    text15.text = grade;
+    text15.color = "red";    
+    text15.height = "55px";
+    text15.fontSize = 55;
+    text15.zIndex = 1;
+    text15.top = 175 + "px";
+    text15.left = (-640 * width) + "px";	// 585
+    advancedTexture.addControl(text15);
+    
     var image = new BABYLON.GUI.Image("but", "images/hud.png");
     image.width = 1;
     var size = window.screen.availWidth / 624;
@@ -129,7 +185,89 @@ var createScene = function() {
     advancedTexture.addControl(image);   
 	
     scene.enablePhysics();
-    var fired = false;
+    var boxMat = new BABYLON.StandardMaterial("boxMat", scene);
+    boxMat.alpha = 0;
+    
+    var box = []
+    var killed = []
+    box[0] = BABYLON.MeshBuilder.CreateBox("box", {}, scene);
+    box[0].position.y = monsters[0].position.y;
+    box[0].position.x = monsters[0].position.x;
+    box[0].position.z = monsters[0].position.z;
+    box[0].scaling.y = 1.75;
+    box[0].scaling.x = 1.15;
+    box[0].scaling.z = 1.15;
+    box[0].material = boxMat;
+    box[0].visibility = true;
+    box[0].enableEdgesRendering();
+    
+    var bullet = new BABYLON.Mesh.CreateSphere("bullet", 4, .6, scene);
+    bullet.position.y = -6;
+    bullet.position.x = 0;
+    bullet.position.z = 0;
+    bullet.checkCollisions = true;
+    bullet.physicsImpostor = new BABYLON.PhysicsImpostor(bullet, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 2, restitution: 0.9 }, scene);
+
+    
+    
+    /*box.actionManager = new BABYLON.ActionManager(scene);
+
+    box.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: { box:bullet, usePreciseIntersection: true} }, box, "scaling", new BABYLON.Vector3(1.2, 1.2, 1.2),
+        function () {
+
+            console.log("enemy maybe killed");
+
+
+            //if (bullet.intersectsMesh(box)) {
+                //then add whatever else you need here after enemy gets hit
+            //}//this will only work in I am like inside the box
+        }));*/
+    scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnEveryFrameTrigger},
+			  function () {
+			        text12.text = kills.toString();
+			        text13.text = shots.toString();
+			        text13.markAsDirty();
+			        if (kills >= 7)
+			        	grade = 'B';
+			        else if (kills >= 5)
+			        	grade = 'C';
+			        else if (kills >= 3)
+			        	grade = 'D'
+			        	
+			        text15.text = grade;
+			        advancedTexture.uppdate();
+			}));
+    
+    bullet.actionManager = new BABYLON.ActionManager(scene);
+    
+    bullet.actionManager.registerAction(new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: box[0]},
+    			function() {
+    				if (killed.indexOf(0) == -1)
+    				{
+    					console.log("killed enemy (bullet)");
+    					box[0].dispose();
+    					monsters[0].dispose();
+    					killed.push(0);
+    					kills++;
+    				}
+    }));
+
+	scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnKeyDownTrigger, parameter: "o" },
+			  function () {
+					var muzzleVelocity = 39;	// was 3
+					var gravity = 0;	// was -9.81
+
+                  bullet.position.y = camera.position.y - .3;
+                  bullet.position.x = camera.position.x;
+                  bullet.position.z = camera.position.z;
+
+                  shots++;
+                  console.log(shots);
+                  bullet.applyImpulse(new BABYLON.Vector3(muzzleVelocity,0,0), bullet.position);
+				  physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(Math.sin(camera.rotation.y) * muzzleVelocity, 0, Math.cos(camera.rotation.y) * muzzleVelocity));
+			}));
+    
+    /*var fired = false;
 	scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnKeyDownTrigger, parameter: "o" },
 			  function () {
 					var bullet = new BABYLON.Mesh.CreateSphere("bullet", 4, .6, scene);
@@ -142,7 +280,7 @@ var createScene = function() {
 					bullet.physicsImpostor = new BABYLON.PhysicsImpostor(bullet, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 2, restitution: 0.9 }, scene);
 						
 					physicsPlugin.setLinearVelocity(bullet.physicsImpostor, new BABYLON.Vector3(Math.sin(camera.rotation.y) * muzzleVelocity, 0, Math.cos(camera.rotation.y) * muzzleVelocity));
-			}));
+			}));*/
 	  
 	// Leave this function
 	return scene;
