@@ -154,20 +154,18 @@ var createScene = function() {
     bullet.checkCollisions = true;
     bullet.physicsImpostor = new BABYLON.PhysicsImpostor(bullet, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 2, restitution: 0.9 }, scene);
 
-    //box.actionManager.registerAction(new BABYLON.SetValueAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: bullet }, box, "scaling", new BABYLON.Vector3(1.2, 1.2, 1.2)));
 
-    //console.log(box);
-    box.actionManager.registerAction(new BABYLON.ExecuteCodeAction({ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: { box:bullet, usePreciseIntersection: true} }, box, "scaling", new BABYLON.Vector3(1.2, 1.2, 1.2),
+    
+
+// Intersection action
+    bullet.actionManager = new BABYLON.ActionManager(scene);
+
+    bullet.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+        { trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: box },
         function () {
-
-            console.log("enemy maybe killed");
-
-
-            if (bullet.intersectsMesh(box)) {
-                //then add whatever else you need here after enemy gets hit
-            }//this will only work in I am like inside the box
-        }));
-
+            console.log("enemy hit");
+        })
+    );
 
 
 
